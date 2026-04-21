@@ -1,0 +1,9 @@
+certifi==2026.2.25
+charset-normalizer==3.4.7
+idna==3.11
+narwhals==2.20.0
+packaging==26.1
+plotly==6.7.0
+python-dotenv==1.2.2
+requests==2.33.1
+urllib3==2.6.3
