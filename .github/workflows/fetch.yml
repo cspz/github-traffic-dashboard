@@ -1,0 +1,36 @@
+name: Fetch GitHub Traffic
+
+on:
+  schedule:
+    - cron: "0 8 * * *"   # runs daily at 8am UTC
+  workflow_dispatch:        # allows manual trigger from GitHub UI
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run fetch script
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          GITHUB_USERNAME: ${{ secrets.GH_USERNAME }}
+        run: python fetch.py
+
+      - name: Commit updated DB
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add traffic.db
+          git diff --staged --quiet || git commit -m "chore: update traffic data"
+          git push
