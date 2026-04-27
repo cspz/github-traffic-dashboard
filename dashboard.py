@@ -291,10 +291,12 @@ def build_dashboard(views_data, clones_data, referrers_data):
     # union of repos across all tables
     all_repos = set(views_data) | set(clones_data) | set(referrers_data)
 
-    # sort by total views descending (most active first)
-    def _total_views(r):
-        return _safe_sum(views_data.get(r, {}).get("views", []))
-    repos = sorted(all_repos, key=_total_views, reverse=True)
+    def _total_activity(r):
+        return (
+            _safe_sum(views_data.get(r, {}).get("views", []))
+            + _safe_sum(clones_data.get(r, {}).get("clones", []))
+        )
+    repos = sorted(all_repos, key=_total_activity, reverse=True)
 
     generated_at = datetime.now().strftime("%d %b %Y · %H:%M")
 
